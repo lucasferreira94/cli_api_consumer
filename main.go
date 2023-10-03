@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
 type Todo struct {
@@ -20,7 +21,7 @@ const endpoint1 string = "https://jsonplaceholder.typicode.com/todos/1"
 
 func get() {
 
-	fmt.Println("Performing HTTP GET")
+	fmt.Println("Performing HTTP GET\n")
 
 	response, err := http.Get(endpoint1)
 	if err != nil {
@@ -42,8 +43,10 @@ func get() {
 
 func post() {
 
-	fmt.Println("Performing HTTP POST")
+	fmt.Println("Performing HTTP POST\n")
 
+	// Conteúdo a ser enviado como dados para o endpoint
+	// Contém o conteudo JSON da API: userId, id, title, completed
 	todo := Todo{1, 2, "lorem ipsum dolor sit amet", true}
 	jsonReq, err := json.Marshal(todo)
 	response, err := http.Post("https://jsonplaceholder.typicode.com/todos", "application/json; charset=utf-8", bytes.NewBuffer(jsonReq))
@@ -66,6 +69,20 @@ func post() {
 }
 
 func main() {
-	get()
-	post()
+
+	var method string = ""
+
+	fmt.Println("Choose HTTP method - [GET] | [POST] | [PUT] | [DELETE]: ")
+	fmt.Scan(&method)
+
+	switch {
+	case method == "get" || method == "GET":
+		get()
+	case method == "post" || method == "POST":
+		post()
+	default:
+		fmt.Println("Ivalid Method")
+		os.Exit(1)
+	}
+
 }
