@@ -45,10 +45,11 @@ func post() {
 
 	fmt.Println("Performing HTTP POST\n")
 
-	// Conteúdo a ser enviado como dados para o endpoint
-	// Contém o conteudo JSON da API: userId, id, title, completed
+	// Conteúdo a ser enviado como dados para o endpoint será de acordo com a struct "Todo"
+	// converte os dados em []byte
 	todo := Todo{1, 2, "lorem ipsum dolor sit amet", true}
 	jsonReq, err := json.Marshal(todo)
+
 	response, err := http.Post("https://jsonplaceholder.typicode.com/todos", "application/json; charset=utf-8", bytes.NewBuffer(jsonReq))
 	if err != nil {
 		log.Fatalln(err)
