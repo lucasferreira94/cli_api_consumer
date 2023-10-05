@@ -27,8 +27,8 @@ func get() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	defer response.Body.Close()
+
 	bodyBytes, _ := ioutil.ReadAll(response.Body)
 
 	//Converte o response body em string
@@ -54,8 +54,8 @@ func post() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	defer response.Body.Close()
+
 	bodyBytes, _ := ioutil.ReadAll(response.Body)
 
 	// Converte response body em string
@@ -66,6 +66,36 @@ func post() {
 	var todoStruct Todo
 	json.Unmarshal(bodyBytes, &todoStruct)
 	fmt.Printf("%+v\n", todoStruct)
+
+}
+
+func put() {
+
+	fmt.Println("Performing HTTP PUT\n")
+
+	todo := Todo{1, 2, "lorem ipsum dolor sit amet", true}
+	jsonReq, err := json.Marshal(todo)
+
+	req, err := http.NewRequest(http.MethodPut, "https://jsonplaceholder.typicode.com/todos/1", bytes.NewBuffer(jsonReq))
+	req.Header.Set("Content-Type", "application/json; charshet=utf-8")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, _ := ioutil.ReadAll(resp.Body)
+
+	// Converter response body em string
+	bodyString := string(bodyBytes)
+	fmt.Println(bodyString)
+
+	// Converter response body em Todo Struct
+	var todoStruct Todo
+	json.Unmarshal(bodyBytes, &todoStruct)
+	fmt.Printf("API Response as struct: \n%+v\n", todoStruct)
 
 }
 
@@ -81,6 +111,8 @@ func main() {
 		get()
 	case method == "post" || method == "POST":
 		post()
+	case method == "put" || method == "PUT":
+		put()
 	default:
 		fmt.Println("Ivalid Method")
 		os.Exit(1)
