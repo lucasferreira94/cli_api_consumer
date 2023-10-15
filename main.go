@@ -18,6 +18,7 @@ type Todo struct {
 }
 
 const endpoint1 string = "https://jsonplaceholder.typicode.com/todos/1"
+const endpoint2 string = "https://jsonplaceholder.typicode.com/todos"
 
 func get() {
 
@@ -50,7 +51,7 @@ func post() {
 	todo := Todo{1, 2, "lorem ipsum dolor sit amet", true}
 	jsonReq, err := json.Marshal(todo)
 
-	response, err := http.Post("https://jsonplaceholder.typicode.com/todos", "application/json; charset=utf-8", bytes.NewBuffer(jsonReq))
+	response, err := http.Post(endpoint2, "application/json; charset=utf-8", bytes.NewBuffer(jsonReq))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -76,7 +77,7 @@ func put() {
 	todo := Todo{1, 2, "lorem ipsum dolor sit amet", true}
 	jsonReq, err := json.Marshal(todo)
 
-	req, err := http.NewRequest(http.MethodPut, "https://jsonplaceholder.typicode.com/todos/1", bytes.NewBuffer(jsonReq))
+	req, err := http.NewRequest(http.MethodPut, endpoint1, bytes.NewBuffer(jsonReq))
 	req.Header.Set("Content-Type", "application/json; charshet=utf-8")
 
 	client := &http.Client{}
@@ -99,6 +100,27 @@ func put() {
 
 }
 
+func delete() {
+	fmt.Println("Performing HTTP Delete\n")
+
+	todo := Todo{1, 2, "lorem ipsum dolor sit amet", true}
+	jsonReq, err := json.Marshal(todo)
+	req, err := http.NewRequest(http.MethodDelete, endpoint1, bytes.NewBuffer(jsonReq))
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer res.Body.Close()
+
+	bodyBytes, _ := ioutil.ReadAll(res.Body)
+
+	bodyString := string(bodyBytes)
+	fmt.Println(bodyString)
+
+}
+
 func main() {
 
 	var method string = ""
@@ -113,6 +135,8 @@ func main() {
 		post()
 	case method == "put" || method == "PUT":
 		put()
+	case method == "delete" || method == "DELETE":
+		delete()
 	default:
 		fmt.Println("Ivalid Method")
 		os.Exit(1)
